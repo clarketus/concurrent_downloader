@@ -15,9 +15,9 @@ module ConcurrentDownloader
       @connect_timeout      = options[:connect_timeout] || 5
       @inactivity_timeout   = options[:inactivity_timeout] || 10
 
-      @error_count = 0
-      @error_limit_passed = false
-      @response_block = block
+      @error_count          = 0
+      @error_limit_passed   = false
+      @response_block       = block
 
       EM.run do
         @concurrent_downloads.times do
@@ -35,8 +35,15 @@ module ConcurrentDownloader
 
         ConcurrentDownloader.logger.info "#{method} #{path}"
 
-        connection = EM::HttpRequest.new(@host, :connect_timeout => @connect_timeout, :inactivity_timeout => @inactivity_timeout)
-        http = connection.send(method, :path => path, :body => body, :head => head)
+        connection = EM::HttpRequest.new @host,
+          :connect_timeout    => @connect_timeout,
+          :inactivity_timeout => @inactivity_timeout
+
+        http = connection.send method,
+          :path => path,
+          :body => body,
+          :head => head
+
         http.callback do |http|
           if http.response_header.status == 200
             @response_block.call(queue_item, http.response)
