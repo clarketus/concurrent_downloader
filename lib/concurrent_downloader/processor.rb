@@ -1,6 +1,12 @@
 module ConcurrentDownloader
   class Processor
 
+    class << self
+      def process_queue!(queue, options={}, &block)
+        new.process_queue!(queue, options, &block)
+      end
+    end
+
     def process_queue!(queue, options={}, &block)
       @queue                = queue || []
       @error_limit          = options[:error_limit] || 0

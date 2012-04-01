@@ -9,8 +9,8 @@ require 'concurrent_downloader/processor'
 module ConcurrentDownloader
 
   class << self
-    def process_queue!(*args, &block)
-      Processor.new.process_queue!(*args, &block)
+    def process_queue!(queue, options={}, &block)
+      Processor.process_queue!(queue, options, &block)
     end
 
     def logger
