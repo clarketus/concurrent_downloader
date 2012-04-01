@@ -72,12 +72,12 @@ module ConcurrentDownloader
       end
     end
 
-    def handle_error(request, current_download)
+    def handle_error(request, queue_item)
       ConcurrentDownloader.logger.info "Error received: #{request.response_header.status} #{request.inspect}"
 
       if @error_count < @error_limit
         @error_count += 1
-        @queue << current_download
+        @queue << queue_item
       else
         @error_limit_passed = true
       end
