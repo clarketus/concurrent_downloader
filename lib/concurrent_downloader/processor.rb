@@ -9,9 +9,10 @@ module ConcurrentDownloader
 
     def process_queue!(queue, options={}, &block)
       @queue                = queue || []
+      @host                 = options[:host]
+
       @error_limit          = options[:error_limit] || 0
       @concurrent_downloads = options[:concurrent_downloads] || 1
-      @host                 = options[:host]
       @connect_timeout      = options[:connect_timeout] || 5
       @inactivity_timeout   = options[:inactivity_timeout] || 10
 
