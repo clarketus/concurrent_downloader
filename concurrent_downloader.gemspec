@@ -14,4 +14,8 @@ Gem::Specification.new do |gem|
   gem.name          = "concurrent_downloader"
   gem.require_paths = ["lib"]
   gem.version       = ConcurrentDownloader::VERSION
+
+  gem.add_dependency('eventmachine')
+  gem.add_dependency('em-http-request')
 end
+
