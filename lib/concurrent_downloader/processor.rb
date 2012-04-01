@@ -46,17 +46,19 @@ module ConcurrentDownloader
           :head => head
 
         request.callback do |request|
-          if request.response_header.status == 200
-            @response_block.call(queue_item, request.response)
-            recursive_download
-          elsif request.response_header.status == 404
-            recursive_download
-          else
+          if !@response_block.call(queue_item, request)
             handle_error(request, queue_item)
           end
         end
+
         request.errback do |request|
           handle_error(request, queue_item)
+        end
+
+        [:callback, :errback].each do |meth|
+          request.send(meth) do
+            recursive_download
+          end
         end
       else
         @concurrent_downloads -= 1
@@ -79,8 +81,6 @@ module ConcurrentDownloader
       else
         @error_limit_passed = true
       end
-
-      recursive_download
     end
   end
 end

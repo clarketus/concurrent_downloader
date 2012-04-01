@@ -12,8 +12,8 @@ describe ConcurrentDownloader do
     queue << {:path => "/test"}
 
     responses = []
-    ConcurrentDownloader.process_queue!(queue, :host => @host_uri, :concurrent_downloads => 1, :error_limit => 0) do |queue_item, response|
-      responses << response
+    ConcurrentDownloader.process_queue!(queue, :host => @host_uri, :concurrent_downloads => 1, :error_limit => 0) do |queue_item, request|
+      responses << request.response
     end
 
     responses.size.should == 1
