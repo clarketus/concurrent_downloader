@@ -40,23 +40,23 @@ module ConcurrentDownloader
           :connect_timeout    => @connect_timeout,
           :inactivity_timeout => @inactivity_timeout
 
-        http = connection.send method,
+        request = connection.send method,
           :path => path,
           :body => body,
           :head => head
 
-        http.callback do |http|
-          if http.response_header.status == 200
-            @response_block.call(queue_item, http.response)
+        request.callback do |request|
+          if request.response_header.status == 200
+            @response_block.call(queue_item, request.response)
             recursive_download
-          elsif http.response_header.status == 404
+          elsif request.response_header.status == 404
             recursive_download
           else
-            handle_error(http, queue_item)
+            handle_error(request, queue_item)
           end
         end
-        http.errback do |http|
-          handle_error(http, queue_item)
+        request.errback do |request|
+          handle_error(request, queue_item)
         end
       else
         @concurrent_downloads -= 1
@@ -70,8 +70,8 @@ module ConcurrentDownloader
       end
     end
 
-    def handle_error(http, current_download)
-      ConcurrentDownloader.logger.info "Error received: #{http.response_header.status} #{http.inspect}"
+    def handle_error(request, current_download)
+      ConcurrentDownloader.logger.info "Error received: #{request.response_header.status} #{request.inspect}"
 
       if @error_count < @error_limit
         @error_count += 1
