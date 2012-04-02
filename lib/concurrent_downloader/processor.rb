@@ -29,6 +29,10 @@ module ConcurrentDownloader
 
     def recursive_download
       if queue_item = @queue.pop
+        if queue_item.is_a?(String)
+          queue_item = {:path => queue_item}
+        end
+
         method  = queue_item[:method] || "get"
         path    = queue_item[:path]
         body    = queue_item[:body]

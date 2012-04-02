@@ -5,4 +5,5 @@ gemspec
 
 gem 'puma'
 gem 'rspec'
+gem 'yajl-ruby'
 
