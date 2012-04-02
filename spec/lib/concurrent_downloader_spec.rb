@@ -16,12 +16,16 @@ describe ConcurrentDownloader do
     queue << "/test"
 
     responses = []
-    ConcurrentDownloader.process_queue!(queue, :host => $mock_host_uri) do |queue_item, request|
-      responses << request.response
+    ConcurrentDownloader.process_queue!(queue, :host => $mock_host_uri) do |queue_item, response|
+      responses << response
     end
 
     responses.size.should == 1
-    Yajl.load(responses.first).should == {
+    response = responses.first
+
+    response.status.should == 200
+    response.headers.should == {"CONNECTION"=>"close", "CONTENT_LENGTH"=>"62"}
+    Yajl.load(response.body).should == {
       "path"        => "/test",
       "body"        => nil,
       "method"      => "GET",
@@ -39,12 +43,16 @@ describe ConcurrentDownloader do
     }
 
     responses = []
-    ConcurrentDownloader.process_queue!(queue, :host => $mock_host_uri) do |queue_item, request|
-      responses << request.response
+    ConcurrentDownloader.process_queue!(queue, :host => $mock_host_uri) do |queue_item, response|
+      responses << response
     end
 
     responses.size.should == 1
-    Yajl.load(responses.first).should == {
+    response = responses.first
+
+    response.status.should == 200
+    response.headers.should == {"CONNECTION"=>"close", "CONTENT_LENGTH"=>"107"}
+    Yajl.load(response.body).should == {
       "path"        => "/test",
       "body"        => "test_param_key=test_param_value",
       "method"      => "POST",

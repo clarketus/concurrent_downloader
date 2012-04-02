@@ -27,6 +27,8 @@ module ConcurrentDownloader
       end
     end
 
+    private
+
     def recursive_download
       if queue_item = @queue.pop
         if queue_item.is_a?(String)
@@ -50,7 +52,12 @@ module ConcurrentDownloader
           :head => head
 
         request.callback do |request|
-          if !@response_block.call(queue_item, request)
+          response = Response.new \
+            :status   => request.response_header.status,
+            :headers  => Hash[request.response_header],
+            :body     => request.response
+
+          if !@response_block.call(queue_item, response)
             handle_error(request, queue_item)
           end
         end

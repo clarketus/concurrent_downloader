@@ -4,6 +4,7 @@ require 'eventmachine'
 require 'em-http-request'
 
 require 'concurrent_downloader/version'
+require 'concurrent_downloader/response'
 require 'concurrent_downloader/processor'
 
 module ConcurrentDownloader
