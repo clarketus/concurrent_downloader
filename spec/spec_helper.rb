@@ -11,7 +11,7 @@ RSpec.configure do |config|
   config.before :suite do
     ConcurrentDownloader.logger = Logger.new($stdout)
 
-    $host_uri = start_mock_server do |request|
+    $mock_host_uri = start_mock_server do |request|
       body = {
         :path         => request.path,
         :body         => (request.post? ? request.body.read : nil),

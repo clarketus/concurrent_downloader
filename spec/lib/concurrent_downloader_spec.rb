@@ -16,7 +16,7 @@ describe ConcurrentDownloader do
     queue << "/test"
 
     responses = []
-    ConcurrentDownloader.process_queue!(queue, :host => $host_uri) do |queue_item, request|
+    ConcurrentDownloader.process_queue!(queue, :host => $mock_host_uri) do |queue_item, request|
       responses << request.response
     end
 
@@ -39,7 +39,7 @@ describe ConcurrentDownloader do
     }
 
     responses = []
-    ConcurrentDownloader.process_queue!(queue, :host => $host_uri) do |queue_item, request|
+    ConcurrentDownloader.process_queue!(queue, :host => $mock_host_uri) do |queue_item, request|
       responses << request.response
     end
 
