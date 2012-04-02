@@ -13,9 +13,6 @@ module MockServerHelper
       end.run.join
     end
 
-    # allow the server time to boot...
-    sleep 0.1
-
     URI.parse "http://127.0.0.1:#{port}"
   end
 
