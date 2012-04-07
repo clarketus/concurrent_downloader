@@ -86,7 +86,7 @@ module ConcurrentDownloader
     end
 
     def handle_error(request, queue_item, error_type, error_message)
-      ConcurrentDownloader.logger.info "Error received: #{request.response_header.status} #{request.inspect}"
+      ConcurrentDownloader.logger.info "#{error_type}: #{error_message}"
 
       @last_error_type = error_type
       @last_error_message = error_message
