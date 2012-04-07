@@ -35,7 +35,9 @@ module ConcurrentDownloader
           queue_item = {:path => queue_item}
         end
 
-        method  = queue_item[:method] || "get"
+        queue_item[:method] ||= "get"
+
+        method  = queue_item[:method]
         path    = queue_item[:path]
         body    = queue_item[:body]
         head    = queue_item[:head] || {}
@@ -60,12 +62,12 @@ module ConcurrentDownloader
             :body     => request.response
 
           if !@response_block.call(queue_item, response)
-            handle_error(request, queue_item, downloader_id, "DownloadError", "There was a download error: #{method.upcase} #{path}: #{response.status}")
+            handle_error DownloadError.new(queue_item, response, downloader_id)
           end
         end
 
         request.errback do |request|
-          handle_error(request, queue_item, downloader_id, "ConnectionError", "There was a connection error: #{method.upcase} #{path}")
+          handle_error ConnectionError.new(queue_item, downloader_id)
         end
 
         [:callback, :errback].each do |meth|
@@ -79,21 +81,19 @@ module ConcurrentDownloader
           EM.stop
 
           if @error_limit_passed
-            raise ConcurrentDownloader.const_get(@last_error_type).new(@last_error_message)
+            raise @last_error
           end
         end
       end
     end
 
-    def handle_error(request, queue_item, downloader_id, error_type, error_message)
-      ConcurrentDownloader.logger.info "#{downloader_id} => #{error_type}: #{error_message}"
-
-      @last_error_type = error_type
-      @last_error_message = error_message
+    def handle_error(error)
+      ConcurrentDownloader.logger.info "#{error.downloader_id} => #{error.class}: #{error.message}"
+      @last_error = error
 
       if @error_count < @error_limit
         @error_count += 1
-        @queue << queue_item
+        @queue << error.queue_item
       else
         @error_limit_passed = true
         @queue = []
