@@ -160,7 +160,7 @@ describe ConcurrentDownloader do
       end
     end
 
-    it "request block returning false should raise a download error" do
+    it "should raise a download error when request block returns false" do
       queue = []
       queue << "/test"
 
@@ -204,7 +204,7 @@ describe ConcurrentDownloader do
       end
     end
 
-    it "should raise an error if the limit is reached, and cancel all downloads in the queue" do
+    it "should raise an error if the limit is reached and cancel all downloads in the queue" do
       queue = []
       10.times do
         queue << "/test"

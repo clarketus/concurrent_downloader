@@ -8,7 +8,7 @@ include MockServerHelper
 
 RSpec.configure do |config|
   config.before :suite do
-    ConcurrentDownloader.logger = Logger.new($stdout)
+    # ConcurrentDownloader.logger = Logger.new($stdout)
 
     $mock_host_uri = start_mock_server do |request|
       body = {
