@@ -42,7 +42,7 @@ module ConcurrentDownloader
 
         head = head.merge(:downloader_id => downloader_id)
 
-        ConcurrentDownloader.logger.info "#{method} #{path}"
+        ConcurrentDownloader.logger.info "#{downloader_id} => #{method} #{path}"
 
         connection = EM::HttpRequest.new @host,
           :connect_timeout    => @connect_timeout,
@@ -60,12 +60,12 @@ module ConcurrentDownloader
             :body     => request.response
 
           if !@response_block.call(queue_item, response)
-            handle_error(request, queue_item, "DownloadError", "There was a download error: #{method.upcase} #{path}: #{response.status}")
+            handle_error(request, queue_item, downloader_id, "DownloadError", "There was a download error: #{method.upcase} #{path}: #{response.status}")
           end
         end
 
         request.errback do |request|
-          handle_error(request, queue_item, "ConnectionError", "There was a connection error: #{method.upcase} #{path}")
+          handle_error(request, queue_item, downloader_id, "ConnectionError", "There was a connection error: #{method.upcase} #{path}")
         end
 
         [:callback, :errback].each do |meth|
@@ -85,8 +85,8 @@ module ConcurrentDownloader
       end
     end
 
-    def handle_error(request, queue_item, error_type, error_message)
-      ConcurrentDownloader.logger.info "#{error_type}: #{error_message}"
+    def handle_error(request, queue_item, downloader_id, error_type, error_message)
+      ConcurrentDownloader.logger.info "#{downloader_id} => #{error_type}: #{error_message}"
 
       @last_error_type = error_type
       @last_error_message = error_message
