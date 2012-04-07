@@ -23,6 +23,7 @@ module ConcurrentDownloader
     end
   end
 
+  class ConnectionError < StandardError; end
   class DownloadError < StandardError; end
 end
 

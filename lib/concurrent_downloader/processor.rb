@@ -21,15 +21,15 @@ module ConcurrentDownloader
       @response_block       = block
 
       EM.run do
-        @concurrent_downloads.times do
-          recursive_download
+        @concurrent_downloads.times do |downloader_id|
+          recursive_download(downloader_id)
         end
       end
     end
 
     private
 
-    def recursive_download
+    def recursive_download(downloader_id)
       if queue_item = @queue.pop
         if queue_item.is_a?(String)
           queue_item = {:path => queue_item}
@@ -39,6 +39,8 @@ module ConcurrentDownloader
         path    = queue_item[:path]
         body    = queue_item[:body]
         head    = queue_item[:head] || {}
+
+        head = head.merge(:downloader_id => downloader_id)
 
         ConcurrentDownloader.logger.info "#{method} #{path}"
 
@@ -58,17 +60,17 @@ module ConcurrentDownloader
             :body     => request.response
 
           if !@response_block.call(queue_item, response)
-            handle_error(request, queue_item)
+            handle_error(request, queue_item, "DownloadError", "There was a download error: #{method.upcase} #{path}: #{response.status}")
           end
         end
 
         request.errback do |request|
-          handle_error(request, queue_item)
+          handle_error(request, queue_item, "ConnectionError", "There was a connection error: #{method.upcase} #{path}")
         end
 
         [:callback, :errback].each do |meth|
           request.send(meth) do
-            recursive_download
+            recursive_download(downloader_id)
           end
         end
       else
@@ -77,20 +79,24 @@ module ConcurrentDownloader
           EM.stop
 
           if @error_limit_passed
-            raise DownloadError.new("There was a download error")
+            raise ConcurrentDownloader.const_get(@last_error_type).new(@last_error_message)
           end
         end
       end
     end
 
-    def handle_error(request, queue_item)
+    def handle_error(request, queue_item, error_type, error_message)
       ConcurrentDownloader.logger.info "Error received: #{request.response_header.status} #{request.inspect}"
+
+      @last_error_type = error_type
+      @last_error_message = error_message
 
       if @error_count < @error_limit
         @error_count += 1
         @queue << queue_item
       else
         @error_limit_passed = true
+        @queue = []
       end
     end
   end
