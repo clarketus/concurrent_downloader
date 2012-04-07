@@ -135,6 +135,11 @@ describe ConcurrentDownloader do
       exception.should_not be_nil
       exception.should be_a(ConcurrentDownloader::ConnectionError)
       exception.message.should == "There was a connection error: GET /test"
+      exception.downloader_id.should == 0
+      exception.queue_item.should == {
+        :path => "/test",
+        :method => "get"
+      }
     end
 
     it "should raise when there is an inactivity timeout" do
@@ -177,6 +182,12 @@ describe ConcurrentDownloader do
       exception.should_not be_nil
       exception.should be_a(ConcurrentDownloader::DownloadError)
       exception.message.should == "There was a download error: GET /test: 200"
+      exception.response.should be_a(ConcurrentDownloader::Response)
+      exception.downloader_id.should == 0
+      exception.queue_item.should == {
+        :path => "/test",
+        :method => "get"
+      }
     end
 
     it "should retry downloading if an error occurs and the limit is not reached" do
