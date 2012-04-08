@@ -31,7 +31,7 @@ Check out spec/lib/concurrent_downloader_spec.rb for lots of usage examples. Her
       end
 
       responses = []
-      ConcurrentDownloader.process_queue!(queue, :host => "http://localhost") do |queue_item, response|
+      ConcurrentDownloader.process_queue!(queue, :host => "http://localhost", :concurrent_downloads => 10) do |queue_item, response|
         responses << response
       end
 
