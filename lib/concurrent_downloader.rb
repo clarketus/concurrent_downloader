@@ -30,10 +30,8 @@ module ConcurrentDownloader
     def initialize(queue_item, downloader_id)
       @queue_item = queue_item
       @downloader_id = downloader_id
-    end
 
-    def message
-      "There was a connection error: #{@queue_item[:method].upcase} #{@queue_item[:path]}"
+      super "There was a connection error: #{@queue_item[:method].upcase} #{@queue_item[:path]}"
     end
   end
 
@@ -47,10 +45,8 @@ module ConcurrentDownloader
       @queue_item = queue_item
       @response = response
       @downloader_id = downloader_id
-    end
 
-    def message
-      "There was a download error: #{@queue_item[:method].upcase} #{@queue_item[:path]}: #{@response.status}"
+      super "There was a download error: #{@queue_item[:method].upcase} #{@queue_item[:path]}: #{@response.status}"
     end
   end
 end
