@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["ollie@clarketus.net"]
   gem.description   = %q{Concurrently download http requests in a synchronous environment.}
   gem.summary       = %q{A basic em-http-request wrapper that slots into a normal ruby script.}
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/clarketus/concurrent_downloader"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
