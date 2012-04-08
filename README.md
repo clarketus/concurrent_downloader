@@ -47,5 +47,5 @@ Check out spec/lib/concurrent_downloader_spec.rb for lots of usage examples. Her
 
 ## Contact
 
-Oliver Clarke ollie@clarketus.net
+Oliver Clarke <ollie@clarketus.net>
 
