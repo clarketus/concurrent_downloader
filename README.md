@@ -37,6 +37,8 @@ Check out spec/lib/concurrent_downloader_spec.rb for lots of usage examples. Her
 
       responses.size.should == 100
 
+The test suite passes in both 1.8.7 and 1.9.3
+
 ## Contributing
 
 1. Fork it
