@@ -32,9 +32,14 @@ Check out spec/lib/concurrent_downloader_spec.rb for lots of usage examples. Her
 
       responses = []
       ConcurrentDownloader.process_queue!(queue, :host => "http://localhost", :concurrent_downloads => 10) do |queue_item, response|
-        responses << response
+        if response.status == 200
+          responses << response
+        else
+          false
+        end
       end
 
+      # if all responses are 200
       responses.size.should == 100
 
 The test suite passes in both 1.8.7 and 1.9.3
