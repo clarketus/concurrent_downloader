@@ -34,8 +34,6 @@ Check out spec/lib/concurrent_downloader_spec.rb for lots of usage examples. Her
       ConcurrentDownloader.process_queue!(queue, :host => "http://localhost", :concurrent_downloads => 10) do |queue_item, response|
         if response.status == 200
           responses << response
-        else
-          false
         end
       end
 
